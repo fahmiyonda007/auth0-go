@@ -56,3 +56,19 @@ func CalculateMetadata(totalRecords int, page int, pageSize int) Metadata {
 		TotalRecords: totalRecords,
 	}
 }
+
+func ValidateFilter(m Metadata, page int, pageSize int) string {
+	if page < m.FirstPage {
+		return "page is not lower than 1"
+	}
+
+	if page > m.LastPage {
+		return "page is not greater than " + string(m.LastPage)
+	}
+
+	if pageSize > 50 {
+		return "page size is not greater than 50"
+	}
+
+	return ""
+}

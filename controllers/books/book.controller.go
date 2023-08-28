@@ -36,11 +36,19 @@ func Books(c *gin.Context) {
 	page, err := strconv.ParseInt(c.DefaultQuery("page", "1"), 10, 64)
 	length, err := strconv.ParseInt(c.DefaultQuery("length", "10"), 10, 64)
 
+	var count int64
 	var books []models.Book
-	models.DB.Find(&books).Limit(metadata.Limit(int(length))).Offset(metadata.Offset(int(page), int(length)))
+	models.DB.Find(&books).Count(&count).Limit(metadata.Limit(int(length))).Offset(metadata.Offset(int(page), int(length))).Find(&books)
+
+	meta := metadata.CalculateMetadata(int(count), int(page), int(length))
+	validate := metadata.ValidateFilter(meta, int(page), int(length))
+
+	if validate != "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": validate})
+	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"metadata": metadata.CalculateMetadata(len(books), int(page), int(length)),
+		"metadata": meta,
 		"data":     books,
 	})
 }
