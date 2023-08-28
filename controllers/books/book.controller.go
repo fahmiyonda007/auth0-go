@@ -45,6 +45,7 @@ func Books(c *gin.Context) {
 
 	if validate != "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": validate})
+		return
 	}
 
 	c.JSON(http.StatusOK, gin.H{

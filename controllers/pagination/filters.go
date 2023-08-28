@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"math"
+	"strconv"
 	"strings"
 )
 
@@ -58,12 +59,16 @@ func CalculateMetadata(totalRecords int, page int, pageSize int) Metadata {
 }
 
 func ValidateFilter(m Metadata, page int, pageSize int) string {
-	if page < m.FirstPage {
+	if page < 1 {
 		return "page is not lower than 1"
 	}
 
+	if pageSize < 1 {
+		return "length is not lower than 1"
+	}
+
 	if page > m.LastPage {
-		return "page is not greater than " + string(m.LastPage)
+		return "page is not greater than " + strconv.Itoa(m.LastPage)
 	}
 
 	if pageSize > 50 {
