@@ -9,8 +9,7 @@ Auth0-go is a REST API project that uses auth0 as identity provider and controll
 ```bash
   git clone https://github.com/fahmiyonda007/auth0-go.git
 ```
-
-download package from go.mod
+copy file `.env.example` and rename to `.env` and then download package from go.mod
 ```bash
   go mod download
 ```
