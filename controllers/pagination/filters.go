@@ -72,7 +72,7 @@ func ValidateFilter(m Metadata, page int, pageSize int) string {
 	}
 
 	if pageSize > 50 {
-		return "page size is not greater than 50"
+		return "length is not greater than 50"
 	}
 
 	return ""

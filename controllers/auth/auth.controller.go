@@ -3,6 +3,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -18,6 +19,7 @@ import (
 //	@BasePath	/api/v1
 
 // Login godoc
+//
 //	@Summary	auth0
 //	@Schemes
 //	@Description	login with auth0 user
@@ -61,15 +63,15 @@ func Login(c *gin.Context) {
 	body, _ := io.ReadAll(res.Body)
 
 	// fmt.Println(res)
-	fmt.Println(string(body))
+	// fmt.Println(string(body))
 
-	// var m map[string]interface{}
-	// if err := json.Unmarshal(body, &m); err != nil {
-	// 	c.JSON(http.StatusBadRequest, gin.H{"data": err.Error})
-	// 	return
-	// }
+	var m map[string]interface{}
+	if err := json.Unmarshal(body, &m); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"data": err.Error})
+		return
+	}
 
-	c.JSON(http.StatusOK, gin.H{"data": body})
+	c.JSON(http.StatusOK, m)
 }
 
 func Authenticate(c *gin.Context) (*jwt.Token, error) {
