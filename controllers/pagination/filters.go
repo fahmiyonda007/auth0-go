@@ -71,7 +71,7 @@ func ValidateFilter(m Metadata, page int, pageSize int) string {
 		return "page is not greater than " + strconv.Itoa(m.LastPage)
 	}
 
-	if pageSize > 50 {
+	if pageSize > 50 && page > 0 {
 		return "length is not greater than 50"
 	}
 

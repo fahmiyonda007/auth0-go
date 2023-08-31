@@ -18,7 +18,7 @@ func ConnectDatabase() {
 		panic("Failed to connect to database!")
 	}
 
-	err = database.AutoMigrate(&Book{})
+	err = database.AutoMigrate(&Book{}, &Author{})
 	if err != nil {
 		return
 	}

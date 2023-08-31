@@ -1,4 +1,4 @@
-// controllers/books.go
+// controllers/authors.go
 
 package controllers
 
@@ -12,7 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var resource = "book"
+var resource = "author"
 var readPermission = "read:" + resource
 var createPermission = "create:" + resource
 var updatePermission = "update:" + resource
@@ -20,21 +20,21 @@ var deletePermission = "delete:" + resource
 
 //	@BasePath	/api/v1
 //
-// Books godoc
+// Authors godoc
 //
-//	@Summary	get all books
+//	@Summary	get all authors
 //	@Schemes
-//	@Description	get all books
-//	@Tags			Books
+//	@Description	get all authors
+//	@Tags			Authors
 //	@Param			page	query	int	false	"page"
 //	@Param			length	query	int	false	"length"
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{array}		BookOutput
+//	@Success		200	{array}		AuthorOutput
 //	@Failure		401	{object}	handler.JSONResult
-//	@Router			/books [get]
+//	@Router			/authors [get]
 //	@Security		BearerAuth
-func Books(c *gin.Context) {
+func Authors(c *gin.Context) {
 	token, err := auth.Authenticate(c)
 
 	if err != nil {
@@ -52,8 +52,8 @@ func Books(c *gin.Context) {
 	length, err := strconv.ParseInt(c.DefaultQuery("length", "10"), 10, 64)
 
 	var count int64
-	var books []models.Book
-	models.DB.Find(&books).Count(&count).Limit(metadata.Limit(int(length))).Offset(metadata.Offset(int(page), int(length))).Preload("Author").Find(&books)
+	var authors []models.Author
+	models.DB.Find(&authors).Count(&count).Limit(metadata.Limit(int(length))).Offset(metadata.Offset(int(page), int(length))).Find(&authors)
 
 	meta := metadata.CalculateMetadata(int(count), int(page), int(length))
 	validate := metadata.ValidateFilter(meta, int(page), int(length))
@@ -65,25 +65,25 @@ func Books(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"metadata": meta,
-		"data":     books,
+		"data":     authors,
 	})
 }
 
 //	@BasePath	/api/v1
 //
-// Books/:id godoc
+// Authors/:id godoc
 //
-//	@Summary	find a book by id
+//	@Summary	find a author by id
 //	@Schemes
-//	@Description	find a book by id
-//	@Tags			Books
+//	@Description	find a author by id
+//	@Tags			Authors
 //	@Param			id	path	int	true	"id"
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{array}	BookOutput
-//	@Router			/books/{id} [get]
+//	@Success		200	{array}	AuthorOutput
+//	@Router			/authors/{id} [get]
 //	@Security		BearerAuth
-func Book(c *gin.Context) {
+func Author(c *gin.Context) {
 	token, err := auth.Authenticate(c)
 
 	if err != nil {
@@ -96,29 +96,29 @@ func Book(c *gin.Context) {
 		return
 	}
 
-	var book models.Book
-	if err := models.DB.Where("id = ?", c.Param("id")).Preload("Author").First(&book).Error; err != nil {
+	var author models.Author
+	if err := models.DB.Where("id = ?", c.Param("id")).First(&author).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Record not found!"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"data": book})
+	c.JSON(http.StatusOK, gin.H{"data": author})
 }
 
 //	@BasePath	/api/v1
 //
-// Books godoc
+// Authors godoc
 //
-//	@Summary	Create new book
+//	@Summary	Create new author
 //	@Schemes
-//	@Description	Create new book
-//	@Tags			Books
-//	@Param			input	body	CreateBookInput	true	"Input"
+//	@Description	Create new author
+//	@Tags			Authors
+//	@Param			input	body	CreateAuthorInput	true	"Input"
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{array}	BookOutput
-//	@Router			/books [post]
+//	@Success		200	{array}	AuthorOutput
+//	@Router			/authors [post]
 //	@Security		BearerAuth
-func CreateBook(c *gin.Context) {
+func CreateAuthor(c *gin.Context) {
 	token, err := auth.Authenticate(c)
 
 	if err != nil {
@@ -132,7 +132,7 @@ func CreateBook(c *gin.Context) {
 	}
 
 	// Validate input
-	var input CreateBookInput
+	var input CreateAuthorInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":  http.StatusBadRequest,
@@ -140,30 +140,30 @@ func CreateBook(c *gin.Context) {
 		})
 		return
 	}
-	// Create book
-	book := models.Book{Title: input.Title, AuthorId: input.AuthorId}
-	models.DB.Create(&book).Preload("Author").First(&book)
+	// Create author
+	author := models.Author{Name: input.Name}
+	models.DB.Create(&author)
 
-	c.JSON(http.StatusOK, gin.H{"data": book})
+	c.JSON(http.StatusOK, gin.H{"data": author})
 
 }
 
 //	@BasePath	/api/v1
 //
-// Books godoc
+// Authors godoc
 //
-//	@Summary	Update a book
+//	@Summary	Update a author
 //	@Schemes
-//	@Description	Update a book
-//	@Tags			Books
-//	@Param			id		path	int				true	"id"
-//	@Param			input	body	UpdateBookInput	false	"Input"
+//	@Description	Update a author
+//	@Tags			Authors
+//	@Param			id		path	int					true	"id"
+//	@Param			input	body	UpdateAuthorInput	false	"Input"
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{array}	BookOutput
-//	@Router			/books/{id} [patch]
+//	@Success		200	{array}	AuthorOutput
+//	@Router			/authors/{id} [patch]
 //	@Security		BearerAuth
-func UpdateBook(c *gin.Context) {
+func UpdateAuthor(c *gin.Context) {
 	token, err := auth.Authenticate(c)
 
 	if err != nil {
@@ -177,8 +177,8 @@ func UpdateBook(c *gin.Context) {
 	}
 
 	// Get model if exist
-	var book models.Book
-	if err := models.DB.Where("id = ?", c.Param("id")).First(&book).Error; err != nil {
+	var author models.Author
+	if err := models.DB.Where("id = ?", c.Param("id")).First(&author).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":  http.StatusBadRequest,
 			"error": "Record not found!",
@@ -187,7 +187,7 @@ func UpdateBook(c *gin.Context) {
 	}
 
 	// Validate input
-	var input UpdateBookInput
+	var input UpdateAuthorInput
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":  http.StatusBadRequest,
@@ -196,35 +196,26 @@ func UpdateBook(c *gin.Context) {
 		return
 	}
 
-	var author models.Author
-	if err := models.DB.Where("id = ?", input.AuthorId).First(&author).Error; err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"code":  http.StatusBadRequest,
-			"error": "Record Author ID not found!",
-		})
-		return
-	}
+	models.DB.Model(&author).Updates(input)
 
-	models.DB.Model(&book).Updates(input).Preload("Author").First(&book)
-
-	c.JSON(http.StatusOK, gin.H{"data": book})
+	c.JSON(http.StatusOK, gin.H{"data": author})
 }
 
 //	@BasePath	/api/v1
 //
-// Books godoc
+// Authors godoc
 //
-//	@Summary	Delete a book
+//	@Summary	Delete a author
 //	@Schemes
-//	@Description	Delete a book
-//	@Tags			Books
+//	@Description	Delete a author
+//	@Tags			Authors
 //	@Param			id	path	int	true	"id"
 //	@Accept			json
 //	@Produce		json
-//	@Success		200	{array}	BookOutput
-//	@Router			/books/{id} [delete]
+//	@Success		200	{array}	AuthorOutput
+//	@Router			/authors/{id} [delete]
 //	@Security		BearerAuth
-func DeleteBook(c *gin.Context) {
+func DeleteAuthor(c *gin.Context) {
 	token, err := auth.Authenticate(c)
 
 	if err != nil {
@@ -238,8 +229,8 @@ func DeleteBook(c *gin.Context) {
 	}
 
 	// Get model if exist
-	var book models.Book
-	if err := models.DB.Where("id = ?", c.Param("id")).First(&book).Error; err != nil {
+	var author models.Author
+	if err := models.DB.Where("id = ?", c.Param("id")).First(&author).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"code":  http.StatusBadRequest,
 			"error": "Record not found!",
@@ -247,7 +238,7 @@ func DeleteBook(c *gin.Context) {
 		return
 	}
 
-	models.DB.Delete(&book)
+	models.DB.Delete(&author)
 
 	c.JSON(http.StatusOK, gin.H{"data": true})
 }

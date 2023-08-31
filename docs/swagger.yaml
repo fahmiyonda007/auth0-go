@@ -1,22 +1,40 @@
 basePath: /api/v1
 definitions:
+  controllers.AuthorOutput:
+    properties:
+      book:
+        items:
+          $ref: '#/definitions/models.Book'
+        type: array
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
   controllers.BookOutput:
     properties:
       author:
-        type: string
+        $ref: '#/definitions/models.Author'
       id:
         type: integer
       title:
         type: string
     type: object
+  controllers.CreateAuthorInput:
+    properties:
+      name:
+        type: string
+    required:
+    - name
+    type: object
   controllers.CreateBookInput:
     properties:
-      author:
-        type: string
+      authorId:
+        type: integer
       title:
         type: string
     required:
-    - author
+    - authorId
     - title
     type: object
   controllers.LoginInput:
@@ -34,12 +52,40 @@ definitions:
       data:
         type: string
     type: object
+  controllers.UpdateAuthorInput:
+    properties:
+      name:
+        type: string
+    type: object
+  controllers.UpdateBookInput:
+    properties:
+      authorId:
+        type: integer
+      title:
+        type: string
+    type: object
   handler.JSONResult:
     properties:
       code:
         type: integer
       data: {}
       message:
+        type: string
+    type: object
+  models.Author:
+    properties:
+      id:
+        type: integer
+      name:
+        type: string
+    type: object
+  models.Book:
+    properties:
+      author:
+        $ref: '#/definitions/models.Author'
+      id:
+        type: integer
+      title:
         type: string
     type: object
 host: localhost:8080
@@ -56,6 +102,141 @@ info:
   title: Gin Book Service
   version: "1.0"
 paths:
+  /authors:
+    get:
+      consumes:
+      - application/json
+      description: get all authors
+      parameters:
+      - description: page
+        in: query
+        name: page
+        type: integer
+      - description: length
+        in: query
+        name: length
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/controllers.AuthorOutput'
+            type: array
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/handler.JSONResult'
+      security:
+      - BearerAuth: []
+      summary: get all authors
+      tags:
+      - Authors
+    post:
+      consumes:
+      - application/json
+      description: Create new author
+      parameters:
+      - description: Input
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.CreateAuthorInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/controllers.AuthorOutput'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Create new author
+      tags:
+      - Authors
+  /authors/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a author
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/controllers.AuthorOutput'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Delete a author
+      tags:
+      - Authors
+    get:
+      consumes:
+      - application/json
+      description: find a author by id
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/controllers.AuthorOutput'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: find a author by id
+      tags:
+      - Authors
+    patch:
+      consumes:
+      - application/json
+      description: Update a author
+      parameters:
+      - description: id
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Input
+        in: body
+        name: input
+        schema:
+          $ref: '#/definitions/controllers.UpdateAuthorInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/controllers.AuthorOutput'
+            type: array
+      security:
+      - BearerAuth: []
+      summary: Update a author
+      tags:
+      - Authors
   /books:
     get:
       consumes:
@@ -122,6 +303,7 @@ paths:
       - description: id
         in: path
         name: id
+        required: true
         type: integer
       produces:
       - application/json
@@ -145,6 +327,7 @@ paths:
       - description: id
         in: path
         name: id
+        required: true
         type: integer
       produces:
       - application/json
@@ -168,7 +351,13 @@ paths:
       - description: id
         in: path
         name: id
+        required: true
         type: integer
+      - description: Input
+        in: body
+        name: input
+        schema:
+          $ref: '#/definitions/controllers.UpdateBookInput'
       produces:
       - application/json
       responses:

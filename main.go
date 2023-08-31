@@ -5,6 +5,7 @@ import (
 	"os"
 
 	auth "github.com/fahmiyonda007/go-gin-gorm/controllers/auth"
+	authors "github.com/fahmiyonda007/go-gin-gorm/controllers/authors"
 	controllers "github.com/fahmiyonda007/go-gin-gorm/controllers/books"
 	docs "github.com/fahmiyonda007/go-gin-gorm/docs"
 	"github.com/fahmiyonda007/go-gin-gorm/middleware"
@@ -49,12 +50,22 @@ func main() {
 	{
 		v1.POST("/login", auth.Login)
 
+		author := v1.Group("/authors")
+		author.Use(middleware.EnsureValidToken())
+		{
+			author.GET("", authors.Authors)
+			author.GET("/:id", authors.Author)
+			author.POST("", authors.CreateAuthor)
+			author.PATCH("/:id", authors.UpdateAuthor)
+			author.DELETE("/:id", authors.DeleteAuthor)
+		}
+
 		book := v1.Group("/books")
 		book.Use(middleware.EnsureValidToken())
 		{
 			book.GET("", controllers.Books)
 			book.GET("/:id", controllers.Book)
-			book.POST("/:id", controllers.CreateBook)
+			book.POST("", controllers.CreateBook)
 			book.PATCH("/:id", controllers.UpdateBook)
 			book.DELETE("/:id", controllers.DeleteBook)
 		}
