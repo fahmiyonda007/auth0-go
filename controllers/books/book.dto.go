@@ -9,3 +9,9 @@ type UpdateBookInput struct {
 	Title  string `json:"title"`
 	Author string `json:"author"`
 }
+
+type BookOutput struct {
+	ID     uint
+	Title  string
+	Author string
+}

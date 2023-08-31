@@ -15,8 +15,18 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// POST /login
-// Get Login via aut0
+//	@BasePath	/api/v1
+
+// Login godoc
+//	@Summary	auth0
+//	@Schemes
+//	@Description	login with auth0 user
+//	@Tags			Authentication
+//	@Param			login	body	LoginInput	true	"Login"
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	LoginOutput
+//	@Router			/login [post]
 func Login(c *gin.Context) {
 	if err := godotenv.Load(); err != nil {
 		log.Fatalf("Error loading the .env file: %v", err)

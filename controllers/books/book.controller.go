@@ -17,8 +17,22 @@ var createPermission = "create:book"
 var updatePermission = "update:book"
 var deletePermission = "delete:book"
 
-// GET /books
-// Get all books
+//	@BasePath	/api/v1
+//
+// Books godoc
+//
+//	@Summary	get all books
+//	@Schemes
+//	@Description	get all books
+//	@Tags			Books
+//	@Param			page	query	int	false	"page"
+//	@Param			length	query	int	false	"length"
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{array}		BookOutput
+//	@Failure		401	{object}	handler.JSONResult
+//	@Router			/books [get]
+//	@Security		BearerAuth
 func Books(c *gin.Context) {
 	token, err := auth.Authenticate(c)
 
@@ -54,9 +68,21 @@ func Books(c *gin.Context) {
 	})
 }
 
-// GET /books/:id
-// Find a book
-func Book(c *gin.Context) { // Get model if exist
+//	@BasePath	/api/v1
+//
+// Books/:id godoc
+//
+//	@Summary	find a book by id
+//	@Schemes
+//	@Description	find a book by id
+//	@Tags			Books
+//	@Param			id	path	int	false	"id"
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{array}	BookOutput
+//	@Router			/books/{id} [get]
+//	@Security		BearerAuth
+func Book(c *gin.Context) {
 	token, err := auth.Authenticate(c)
 
 	if err != nil {
@@ -77,8 +103,20 @@ func Book(c *gin.Context) { // Get model if exist
 	c.JSON(http.StatusOK, gin.H{"data": book})
 }
 
-// POST /books
-// Create new book
+//	@BasePath	/api/v1
+//
+// Books godoc
+//
+//	@Summary	Create new book
+//	@Schemes
+//	@Description	Create new book
+//	@Tags			Books
+//	@Param			input	body	CreateBookInput	true	"Input"
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{array}	BookOutput
+//	@Router			/books [post]
+//	@Security		BearerAuth
 func CreateBook(c *gin.Context) {
 	token, err := auth.Authenticate(c)
 
@@ -109,8 +147,20 @@ func CreateBook(c *gin.Context) {
 
 }
 
-// PATCH /books/:id
-// Update a book
+//	@BasePath	/api/v1
+//
+// Books godoc
+//
+//	@Summary	Update a book
+//	@Schemes
+//	@Description	Update a book
+//	@Tags			Books
+//	@Param			id	path	int	false	"id"
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{array}	BookOutput
+//	@Router			/books/{id} [patch]
+//	@Security		BearerAuth
 func UpdateBook(c *gin.Context) {
 	token, err := auth.Authenticate(c)
 
@@ -149,8 +199,20 @@ func UpdateBook(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"data": book})
 }
 
-// DELETE /books/:id
-// Delete a book
+//	@BasePath	/api/v1
+//
+// Books godoc
+//
+//	@Summary	Delete a book
+//	@Schemes
+//	@Description	Delete a book
+//	@Tags			Books
+//	@Param			id	path	int	false	"id"
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{array}	BookOutput
+//	@Router			/books/{id} [delete]
+//	@Security		BearerAuth
 func DeleteBook(c *gin.Context) {
 	token, err := auth.Authenticate(c)
 
